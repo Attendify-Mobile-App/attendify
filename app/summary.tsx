@@ -1,5 +1,6 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
+import { Card, Text } from '@/components/ui/paper';
 import { useAttendance } from '@/context/attendance-context';
 import { countPresentTotals, filterMarksForMonth, monthLabels } from '@/utils/attendance';
 
@@ -29,95 +30,90 @@ export default function SummaryScreen() {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Full Summary Report</Text>
-      <Text style={styles.subtitle}>
+    <ScrollView contentContainerClassName="bg-slate-50 px-6 pt-6 pb-10">
+      <Text variant="headlineSmall" className="font-semibold">
+        Full Summary Report
+      </Text>
+      <Text variant="bodyMedium" className="text-slate-500 mt-1 mb-4">
         {selectedClass
-          ? `${selectedClass.schoolName} • ${selectedClass.className}-${selectedClass.division} (${selectedClass.year})`
+          ? `${selectedClass.schoolName} - ${selectedClass.className}-${selectedClass.division} (${selectedClass.year})`
           : 'No class selected yet.'}
       </Text>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Class Overview</Text>
-        <Text style={styles.metaText}>Total Students: {students.length}</Text>
-        <Text style={styles.metaText}>Total Boys: {students.filter((s) => s.gender === 'Male').length}</Text>
-        <Text style={styles.metaText}>Total Girls: {students.filter((s) => s.gender === 'Female').length}</Text>
-      </View>
+      <Card className="rounded-2xl mb-4">
+        <View className="p-4">
+          <Text variant="titleMedium" className="font-semibold mb-2">
+            Class Overview
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            Total Students: {students.length}
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            Total Boys: {students.filter((s) => s.gender === 'Male').length}
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            Total Girls: {students.filter((s) => s.gender === 'Female').length}
+          </Text>
+        </View>
+      </Card>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Monthly Attendance Summary</Text>
-        {monthlySummaries.map((summary) => (
-          <View key={summary.label} style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>{summary.label}</Text>
-            <Text style={styles.summaryValue}>Boys: {summary.totals.boys}</Text>
-            <Text style={styles.summaryValue}>Girls: {summary.totals.girls}</Text>
-            <Text style={styles.summaryValue}>Total: {summary.totals.total}</Text>
-          </View>
-        ))}
-      </View>
+      <Card className="rounded-2xl mb-4">
+        <View className="p-4">
+          <Text variant="titleMedium" className="font-semibold mb-3">
+            Monthly Attendance Summary
+          </Text>
+          {monthlySummaries.map((summary, index) => (
+            <View key={summary.label} className={index ? 'border-t border-slate-200 py-3' : 'py-2'}>
+              <Text variant="bodyMedium" className="font-semibold mb-1">
+                {summary.label}
+              </Text>
+              <Text variant="bodySmall" className="text-slate-500">
+                Boys: {summary.totals.boys}
+              </Text>
+              <Text variant="bodySmall" className="text-slate-500">
+                Girls: {summary.totals.girls}
+              </Text>
+              <Text variant="bodySmall" className="text-slate-500">
+                Total: {summary.totals.total}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </Card>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Year Totals</Text>
-        <Text style={styles.metaText}>Boys Attendance: {yearlyTotals.boys}</Text>
-        <Text style={styles.metaText}>Girls Attendance: {yearlyTotals.girls}</Text>
-        <Text style={styles.metaText}>Overall Attendance: {yearlyTotals.total}</Text>
-      </View>
+      <Card className="rounded-2xl mb-4">
+        <View className="p-4">
+          <Text variant="titleMedium" className="font-semibold mb-2">
+            Year Totals
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            Boys Attendance: {yearlyTotals.boys}
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            Girls Attendance: {yearlyTotals.girls}
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            Overall Attendance: {yearlyTotals.total}
+          </Text>
+        </View>
+      </Card>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Next Steps</Text>
-        <Text style={styles.metaText}>• Connect to SQLite/Firebase for persistence.</Text>
-        <Text style={styles.metaText}>• Export this report to PDF once data is ready.</Text>
-        <Text style={styles.metaText}>• Add edit/delete for students and marks.</Text>
-      </View>
+      <Card className="rounded-2xl">
+        <View className="p-4">
+          <Text variant="titleMedium" className="font-semibold mb-2">
+            Next Steps
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            - Connect to SQLite/Firebase for persistence.
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            - Export this report to PDF once data is ready.
+          </Text>
+          <Text variant="bodySmall" className="text-slate-500">
+            - Add edit/delete for students and marks.
+          </Text>
+        </View>
+      </Card>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    backgroundColor: '#f5f7fb',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#4a5568',
-    marginBottom: 16,
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#1a202c',
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  metaText: {
-    fontSize: 13,
-    color: '#64748b',
-    marginBottom: 4,
-  },
-  summaryRow: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
-    paddingVertical: 10,
-  },
-  summaryLabel: {
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  summaryValue: {
-    color: '#4a5568',
-    fontSize: 13,
-  },
-});
