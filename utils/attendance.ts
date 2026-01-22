@@ -1,4 +1,4 @@
-import type { AttendanceMark, AttendanceStatus, Gender, Student } from '@/context/attendance-context';
+import type { AttendanceMark, AttendanceStatus, Gender, Student } from '@/types/attendance';
 
 export const monthLabels = [
   'January',
