@@ -1,11 +1,11 @@
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
-import { Text } from '@/components/ui/paper';
-import { LoginForm } from '@/components/auth/login-form';
-import { useLoginLogic } from './useLogin';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-export default function LoginScreen() {
+import { Text } from '@/components/ui/paper';
+import { ResetPasswordForm } from '@/components/auth/reset-password-form';
+import { useResetPasswordLogic } from './useResetPassword';
 
+export default function ResetPasswordScreen() {
   const {
     backgroundColor,
     textColor,
@@ -14,14 +14,22 @@ export default function LoginScreen() {
     setUsername,
     password,
     setPassword,
-    error,
+    newPassword,
+    setNewPassword,
+    confirmNewPassword,
+    setConfirmNewPassword,
     showPassword,
     setShowPassword,
+    showNewPassword,
+    setShowNewPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    error,
+    success,
     isLoading,
-    handleLogin,
-    goToResetPassword,
-    goToSignup,
-  } = useLoginLogic();
+    handleResetPassword,
+    goToLogin,
+  } = useResetPasswordLogic();
 
   return (
     <SafeAreaProvider className="flex-1" style={{ backgroundColor }}>
@@ -38,29 +46,36 @@ export default function LoginScreen() {
             {/* Header */}
             <View>
               <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
-                Sign in
+                Reset Password
               </Text>
               <Text variant="bodyMedium" className="mt-2" style={{ color: textColor, opacity: 0.7 }}>
-                Use your account to continue
+                Update your password to continue
               </Text>
             </View>
 
             {/* Form */}
-            <LoginForm
+            <ResetPasswordForm
               username={username}
               setUsername={setUsername}
               password={password}
               setPassword={setPassword}
+              newPassword={newPassword}
+              setNewPassword={setNewPassword}
+              confirmNewPassword={confirmNewPassword}
+              setConfirmNewPassword={setConfirmNewPassword}
               showPassword={showPassword}
               setShowPassword={setShowPassword}
+              showNewPassword={showNewPassword}
+              setShowNewPassword={setShowNewPassword}
+              showConfirmPassword={showConfirmPassword}
+              setShowConfirmPassword={setShowConfirmPassword}
               error={error}
+              success={success}
               tintColor={tintColor}
               isLoading={isLoading}
-              handleLogin={handleLogin}
-              goToResetPassword={goToResetPassword}
-              goToSignup={goToSignup}
+              handleResetPassword={handleResetPassword}
+              goToLogin={goToLogin}
             />
-          
           </View>
         </KeyboardAvoidingView>
       </ScrollView>

@@ -25,6 +25,12 @@ export type SignupRequest = {
   role?: Role;
 };
 
+export type ResetPasswordRequest = {
+  username: string;
+  password: string;
+  newPassword: string;
+};
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
@@ -44,8 +50,17 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
+
+    resetPassword: builder.mutation<User, ResetPasswordRequest>({
+      query: (body) => ({
+        url: '/auth/reset-password',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Auth'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useLoginMutation, useSignupMutation } = authApi;
+export const { useLoginMutation, useSignupMutation, useResetPasswordMutation } = authApi;
