@@ -1,109 +1,50 @@
-import { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button, Card, Chip, Text, TextInput } from '@/components/ui/paper';
-import { useAttendance } from '@/context/attendance-context';
+import { Button, Card, Chip, FAB, Text, TextInput } from '@/components/ui/paper';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useCreateClassMutation, useGetClassesQuery } from '@/store/api/classApi';
-import type { SchoolClass } from '@/types/attendance';
+import { ADD_NEW_CLASS_SCREEN } from '@/constants/navigation/path';
+import { useSelectClass } from './useSelect-class';
 
 export default function SelectClassScreen() {
   const router = useRouter();
-  const { setSelectedClass } = useAttendance();
-  const [filterSchoolName, setFilterSchoolName] = useState('');
-  const [filterYear, setFilterYear] = useState('');
-  const [filterClassName, setFilterClassName] = useState('');
-  const [filterDivision, setFilterDivision] = useState('');
-  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
-  const [schoolName, setSchoolName] = useState('');
-  const [academicYear, setAcademicYear] = useState('');
-  const [className, setClassName] = useState('');
-  const [division, setDivision] = useState('');
+  const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const { data: classes = [], isLoading } = useGetClassesQuery({
-    schoolName: filterSchoolName || undefined,
-    academicYear: filterYear || undefined,
-    className: filterClassName || undefined,
-    division: filterDivision || undefined,
-  });
-  const [createClass, { isLoading: isCreating }] = useCreateClassMutation();
 
-  const selectedClass = useMemo(
-    () => classes.find((item) => item.id === selectedClassId) ?? null,
-    [classes, selectedClassId],
-  );
+  const {
+    filterSchoolName,
+    setFilterSchoolName,
+    filterYear,
+    setFilterYear,
+    filterClassName,
+    setFilterClassName,
+    filterDivision,
+    setFilterDivision,
+    selectedClassId,
 
-  const distinctValues = useMemo(() => {
-    const schoolNames = new Set<string>();
-    const years = new Set<string>();
-    const classNames = new Set<string>();
-    const divisions = new Set<string>();
+    classes,
+    isLoadingClasses,
+    selectedClass,
+    distinctValues,
 
-    classes.forEach((item) => {
-      schoolNames.add(item.schoolName);
-      years.add(item.academicYear);
-      classNames.add(item.className);
-      divisions.add(item.division);
-    });
-
-    return {
-      schoolNames: Array.from(schoolNames),
-      years: Array.from(years),
-      classNames: Array.from(classNames),
-      divisions: Array.from(divisions),
-    };
-  }, [classes]);
-
-  const handleContinue = () => {
-    if (!selectedClass) {
-      return;
-    }
-    setSelectedClass(selectedClass);
-    router.push('/students');
-  };
-
-  const handleCreateClass = async () => {
-    if (!schoolName || !academicYear || !className || !division) {
-      return;
-    }
-    const created = await createClass({
-      schoolName,
-      academicYear,
-      className,
-      division,
-    }).unwrap();
-
-    setSchoolName('');
-    setAcademicYear('');
-    setClassName('');
-    setDivision('');
-    setFilterSchoolName(created.schoolName);
-    setFilterYear(created.academicYear);
-    setFilterClassName(created.className);
-    setFilterDivision(created.division);
-    setSelectedClassId(created.id);
-    setSelectedClass(created);
-  };
-
-  const handleSelect = (item: SchoolClass) => {
-    setSelectedClassId(item.id);
-  };
+    handleSelect,
+    handleContinue,
+  } = useSelectClass();
 
   return (
     <SafeAreaProvider className="flex-1" style={{ backgroundColor }}>
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1, backgroundColor }}
+        contentContainerStyle={{ flexGrow: 1, backgroundColor, paddingBottom: insets.bottom + 96 }}
         showsVerticalScrollIndicator={false}
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           className="flex-1"
         >
-          <View className="flex-1 px-6 py-8 justify-center">
+          <View className="flex-1 px-6 py-12 justify-center">
             <View>
               <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
                 Class Selection
@@ -213,13 +154,13 @@ export default function SelectClassScreen() {
                 <Text variant="titleMedium" className="font-semibold mb-3">
                   Existing Classes
                 </Text>
-                {isLoading ? (
+                {isLoadingClasses ? (
                   <Text variant="bodyMedium" className="text-slate-400">
                     Loading classes...
                   </Text>
                 ) : classes.length === 0 ? (
                   <Text variant="bodyMedium" className="text-slate-400">
-                    No classes found. Create one below.
+                    No classes found. Tap + to create one.
                   </Text>
                 ) : (
                   classes.map((item) => (
@@ -236,59 +177,6 @@ export default function SelectClassScreen() {
               </View>
             </Card>
 
-            <Card className="rounded-2xl mt-4">
-              <View className="p-5">
-                <Text variant="titleMedium" className="font-semibold mb-3">
-                  Create New Class
-                </Text>
-                <TextInput
-                  mode="outlined"
-                  label="School Name"
-                  placeholder="e.g. Sunshine Public School"
-                  value={schoolName}
-                  onChangeText={setSchoolName}
-                  className="mb-3"
-                />
-
-                <TextInput
-                  mode="outlined"
-                  label="Academic Year"
-                  placeholder="e.g. 2024-2025"
-                  value={academicYear}
-                  onChangeText={setAcademicYear}
-                  className="mb-3"
-                />
-
-                <TextInput
-                  mode="outlined"
-                  label="Class"
-                  placeholder="e.g. 6"
-                  value={className}
-                  onChangeText={setClassName}
-                  className="mb-3"
-                />
-
-                <TextInput
-                  mode="outlined"
-                  label="Division"
-                  placeholder="e.g. A"
-                  value={division}
-                  onChangeText={setDivision}
-                  className="mb-4"
-                />
-
-                <Button
-                  mode="contained"
-                  onPress={handleCreateClass}
-                  loading={isCreating}
-                  disabled={isCreating}
-                  className="rounded-xl"
-                >
-                  {isCreating ? 'Creating...' : 'Create Class'}
-                </Button>
-              </View>
-            </Card>
-
             <Button
               mode="contained"
               onPress={handleContinue}
@@ -300,6 +188,12 @@ export default function SelectClassScreen() {
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
+
+      <FAB
+        icon="plus"
+        onPress={() => router.push(ADD_NEW_CLASS_SCREEN)}
+        style={{ position: 'absolute', right: 16, bottom: insets.bottom + 16 }}
+      />
     </SafeAreaProvider>
   );
 }
