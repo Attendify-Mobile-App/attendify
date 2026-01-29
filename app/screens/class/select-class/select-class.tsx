@@ -1,17 +1,21 @@
 import { useRouter } from 'expo-router';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useMemo, useState } from 'react';
 
-import { Button, Card, Chip, FAB, Text, TextInput } from '@/components/ui/paper';
+import { Button, Card, FAB, Text } from '@/components/ui/paper';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { ADD_NEW_CLASS_SCREEN } from '@/constants/navigation/path';
 import { useSelectClass } from './useSelect-class';
+import { ClassSelectionFilterModal } from '@/components/class/class-selection-filter-model';
 
 export default function SelectClassScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
+
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   const {
     filterSchoolName,
@@ -32,6 +36,15 @@ export default function SelectClassScreen() {
     handleSelect,
     handleContinue,
   } = useSelectClass();
+
+  const filterSummary = useMemo(() => {
+    const parts = [];
+    if (filterSchoolName) parts.push(filterSchoolName);
+    if (filterYear) parts.push(filterYear);
+    if (filterClassName) parts.push(filterClassName);
+    if (filterDivision) parts.push(filterDivision);
+    return parts.length ? parts.join(' • ') : 'No filters applied';
+  }, [filterSchoolName, filterYear, filterClassName, filterDivision]);
 
   return (
     <SafeAreaProvider className="flex-1" style={{ backgroundColor }}>
@@ -60,92 +73,19 @@ export default function SelectClassScreen() {
 
             <Card className="rounded-2xl mt-6">
               <View className="p-5">
-                <Text variant="titleMedium" className="font-semibold mb-3">
+                <Text variant="titleMedium" className="font-semibold">
                   Filters
                 </Text>
-                <TextInput
+                <Text variant="bodySmall" className="mt-2 text-slate-500">
+                  {filterSummary}
+                </Text>
+                <Button
                   mode="outlined"
-                  label="School Name"
-                  placeholder="Filter by school name"
-                  value={filterSchoolName}
-                  onChangeText={setFilterSchoolName}
-                  className="mb-3"
-                />
-                <View className="flex-row flex-wrap gap-2 mb-3">
-                  {distinctValues.schoolNames.map((value) => (
-                    <Chip
-                      key={value}
-                      selected={filterSchoolName === value}
-                      onPress={() => setFilterSchoolName(value)}
-                      className="mr-1"
-                    >
-                      {value}
-                    </Chip>
-                  ))}
-                </View>
-
-                <TextInput
-                  mode="outlined"
-                  label="Academic Year"
-                  placeholder="Filter by academic year"
-                  value={filterYear}
-                  onChangeText={setFilterYear}
-                  className="mb-3"
-                />
-                <View className="flex-row flex-wrap gap-2 mb-3">
-                  {distinctValues.years.map((value) => (
-                    <Chip
-                      key={value}
-                      selected={filterYear === value}
-                      onPress={() => setFilterYear(value)}
-                      className="mr-1"
-                    >
-                      {value}
-                    </Chip>
-                  ))}
-                </View>
-
-                <TextInput
-                  mode="outlined"
-                  label="Class"
-                  placeholder="Filter by class"
-                  value={filterClassName}
-                  onChangeText={setFilterClassName}
-                  className="mb-3"
-                />
-                <View className="flex-row flex-wrap gap-2 mb-3">
-                  {distinctValues.classNames.map((value) => (
-                    <Chip
-                      key={value}
-                      selected={filterClassName === value}
-                      onPress={() => setFilterClassName(value)}
-                      className="mr-1"
-                    >
-                      {value}
-                    </Chip>
-                  ))}
-                </View>
-
-                <TextInput
-                  mode="outlined"
-                  label="Division"
-                  placeholder="Filter by division"
-                  value={filterDivision}
-                  onChangeText={setFilterDivision}
-                  className="mb-3"
-                />
-                <View className="flex-row flex-wrap gap-2 mb-2">
-                  {distinctValues.divisions.map((value) => (
-                    <Chip
-                      key={value}
-                      selected={filterDivision === value}
-                      onPress={() => setFilterDivision(value)}
-                      className="mr-1"
-                    >
-                      {value}
-                    </Chip>
-                  ))}
-                </View>
+                  onPress={() => setFilterModalVisible(true)}
+                  className="rounded-xl mt-4"
+                >
+                  Filter Classes
+                </Button>
               </View>
             </Card>
 
@@ -193,6 +133,20 @@ export default function SelectClassScreen() {
         icon="plus"
         onPress={() => router.push(ADD_NEW_CLASS_SCREEN)}
         style={{ position: 'absolute', right: 16, bottom: insets.bottom + 16 }}
+      />
+
+      <ClassSelectionFilterModal
+        visible={filterModalVisible}
+        onDismiss={() => setFilterModalVisible(false)}
+        filterSchoolName={filterSchoolName}
+        setFilterSchoolName={setFilterSchoolName}
+        filterYear={filterYear}
+        setFilterYear={setFilterYear}
+        filterClassName={filterClassName}
+        setFilterClassName={setFilterClassName}
+        filterDivision={filterDivision}
+        setFilterDivision={setFilterDivision}
+        distinctValues={distinctValues}
       />
     </SafeAreaProvider>
   );
