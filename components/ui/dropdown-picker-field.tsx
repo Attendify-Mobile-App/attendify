@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -7,6 +8,7 @@ import { Text } from '@/components/ui/paper';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 type DropdownItem = { label: string; value: string };
+type SetStateCallback<S> = (prevState: S) => S;
 
 type DropdownPickerFieldProps = {
   label: string;
@@ -15,7 +17,7 @@ type DropdownPickerFieldProps = {
   items: DropdownItem[];
   onOpenChange: (nextOpen: boolean) => void;
   onValueChange: (nextValue: string) => void;
-  setItems: (items: DropdownItem[]) => void;
+  setItems: Dispatch<SetStateAction<DropdownItem[]>>;
   placeholder: string;
   searchPlaceholder: string;
   zIndex: number;
@@ -93,7 +95,7 @@ export function DropdownPickerField({
       modalTitle,
       modalContentContainerStyle:
         listMode === 'MODAL' ? (modalContentContainerStyle ?? defaultModalContentStyle) : undefined,
-      modalAnimationType: listMode === 'MODAL' ? 'fade' : undefined,
+      modalAnimationType: listMode === 'MODAL' ? ('fade' as const) : undefined,
       modalProps: listMode === 'MODAL' ? { transparent: true } : undefined,
     }),
     [
@@ -119,6 +121,7 @@ export function DropdownPickerField({
         open={open}
         value={value}
         items={items}
+        multiple={false}
         setOpen={(nextOpen) => {
           const resolved = typeof nextOpen === 'function' ? nextOpen(open) : nextOpen;
           onOpenChange(resolved);
@@ -127,7 +130,7 @@ export function DropdownPickerField({
           const nextValue = typeof callback === 'function' ? callback(value || null) : callback;
           onValueChange(nextValue ?? '');
         }}
-        setItems={setItems}
+        setItems={setItems as Dispatch<SetStateCallback<DropdownItem[]>>}
         placeholder={placeholder}
         searchable
         searchPlaceholder={searchPlaceholder}
