@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
+import type { ComponentProps, Dispatch, SetStateAction } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import { Text } from '@/components/ui/paper';
@@ -26,6 +27,7 @@ type DropdownPickerFieldProps = {
   listMode?: 'SCROLLVIEW' | 'MODAL' | 'FLATLIST';
   modalTitle?: string;
   modalContentContainerStyle?: StyleProp<ViewStyle>;
+  leftIconName?: ComponentProps<typeof MaterialCommunityIcons>['name'];
 };
 
 export function DropdownPickerField({
@@ -44,6 +46,7 @@ export function DropdownPickerField({
   listMode = 'SCROLLVIEW',
   modalTitle,
   modalContentContainerStyle,
+  leftIconName,
 }: DropdownPickerFieldProps) {
   const activeZIndex = open ? 5000 + zIndex : zIndex;
   const fieldBackground = useThemeColor({ light: '#F8FAFC', dark: '#151A1E' }, 'background');
@@ -73,6 +76,7 @@ export function DropdownPickerField({
         borderWidth: 1,
         borderRadius: 16,
         minHeight: 48,
+        paddingLeft: 12,
       },
       dropDownContainerStyle: {
         backgroundColor: fieldBackground,
@@ -117,28 +121,37 @@ export function DropdownPickerField({
       <Text variant="labelMedium" className="mb-2" style={{ color: labelColor }}>
         {label}
       </Text>
-      <DropDownPicker
-        open={open}
-        value={value}
-        items={items}
-        multiple={false}
-        setOpen={(nextOpen) => {
-          const resolved = typeof nextOpen === 'function' ? nextOpen(open) : nextOpen;
-          onOpenChange(resolved);
-        }}
-        setValue={(callback) => {
-          const nextValue = typeof callback === 'function' ? callback(value || null) : callback;
-          onValueChange(nextValue ?? '');
-        }}
-        setItems={setItems as Dispatch<SetStateCallback<DropdownItem[]>>}
-        placeholder={placeholder}
-        searchable
-        searchPlaceholder={searchPlaceholder}
-        dropDownDirection={dropDownDirection}
-        zIndex={zIndex}
-        zIndexInverse={zIndexInverse}
-        {...pickerSharedProps}
-      />
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {leftIconName ? (
+          <View style={{ width: 24, alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialCommunityIcons name={leftIconName} size={20} color={valueColor} />
+          </View>
+        ) : null}
+        <View style={{ flex: 1, marginLeft: leftIconName ? 8 : 0 }}>
+          <DropDownPicker
+            open={open}
+            value={value}
+            items={items}
+            multiple={false}
+            setOpen={(nextOpen) => {
+              const resolved = typeof nextOpen === 'function' ? nextOpen(open) : nextOpen;
+              onOpenChange(resolved);
+            }}
+            setValue={(callback) => {
+              const nextValue = typeof callback === 'function' ? callback(value || null) : callback;
+              onValueChange(nextValue ?? '');
+            }}
+            setItems={setItems as Dispatch<SetStateCallback<DropdownItem[]>>}
+            placeholder={placeholder}
+            searchable
+            searchPlaceholder={searchPlaceholder}
+            dropDownDirection={dropDownDirection}
+            zIndex={zIndex}
+            zIndexInverse={zIndexInverse}
+            {...pickerSharedProps}
+          />
+        </View>
+      </View>
     </View>
   );
 }

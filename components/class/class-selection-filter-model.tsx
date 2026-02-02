@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Modal, Portal } from 'react-native-paper';
+import { IconButton, Modal, Portal } from 'react-native-paper';
 
 import { Button, Card, Divider, Text } from '@/components/ui/paper';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -105,9 +105,12 @@ export function ClassSelectionFilterModal({
             contentContainerStyle={{ padding: 20, paddingBottom: 12 }}
             showsVerticalScrollIndicator={false}
           >
-            <Text variant="titleLarge" className="font-semibold">
-              Filter Classes
-            </Text>
+            <View className="flex-row items-start justify-between">
+              <Text variant="titleLarge" className="font-semibold">
+                Filter Classes
+              </Text>
+              <IconButton icon="close" size={20} onPress={onDismiss} />
+            </View>
             <Text variant="bodySmall" className="mt-1" style={{ color: labelColor }}>
               Refine the list to find the right class.
             </Text>
@@ -116,6 +119,7 @@ export function ClassSelectionFilterModal({
 
             <DropdownPickerField
               label="School"
+              leftIconName="school-outline"
               open={schoolOpen}
               value={filterSchoolName}
               items={schoolItems}
@@ -139,6 +143,7 @@ export function ClassSelectionFilterModal({
 
             <DropdownPickerField
               label="Academic Year"
+              leftIconName="calendar-month-outline"
               open={yearOpen}
               value={filterYear}
               items={yearItems}
@@ -162,6 +167,7 @@ export function ClassSelectionFilterModal({
 
             <DropdownPickerField
               label="Class"
+              leftIconName="google-classroom"
               open={classOpen}
               value={filterClassName}
               items={classItems}
@@ -185,6 +191,7 @@ export function ClassSelectionFilterModal({
 
             <DropdownPickerField
               label="Division"
+              leftIconName="view-grid-outline"
               open={divisionOpen}
               value={filterDivision}
               items={divisionItems}
