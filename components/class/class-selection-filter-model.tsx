@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconButton, Modal, Portal } from 'react-native-paper';
 
 import { Button, Card, Divider, Text } from '@/components/ui/paper';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { DropdownPickerField } from '@/components/ui/dropdown-picker-field';
 
@@ -42,6 +44,7 @@ export function ClassSelectionFilterModal({
   distinctValues,
 }: ClassSelectionFilterModalProps) {
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme() ?? 'light';
   const labelColor = useThemeColor({ light: '#475569', dark: '#CBD5E1' }, 'text');
 
   const [schoolOpen, setSchoolOpen] = useState(false);
@@ -91,9 +94,19 @@ export function ClassSelectionFilterModal({
 
   return (
     <Portal>
+      {visible ? (
+        <BlurView
+          pointerEvents="none"
+          tint={colorScheme === 'dark' ? 'dark' : 'light'}
+          intensity={30}
+          experimentalBlurMethod="dimezisBlurView"
+          style={styles.backdropBlur}
+        />
+      ) : null}
       <Modal
         visible={visible}
         onDismiss={onDismiss}
+        theme={{ colors: { backdrop: 'transparent' } }}
         contentContainerStyle={{
           marginHorizontal: 20,
           marginTop: insets.top + 24,
@@ -228,3 +241,10 @@ export function ClassSelectionFilterModal({
     </Portal>
   );
 }
+
+const styles = StyleSheet.create({
+  backdropBlur: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(15, 23, 42, 0.14)',
+  },
+});
