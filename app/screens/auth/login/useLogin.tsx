@@ -5,7 +5,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLoginMutation } from '@/store/api/authApi';
 import { useAppDispatch } from '@/store/hooks';
 import { setCredentials } from '@/store/slices/authSlice';
-import { RESET_PASSWORD_SCREEN, SIGNUP_SCREEN } from '@/constants/navigation/path';
+import { RESET_PASSWORD_SCREEN, SIGNUP_SCREEN , SELECT_CLASS_SCREEN } from '@/constants/navigation/path';
 
 function getErrorMessage(error: unknown): string {
 	if (!error) return 'Something went wrong.';
@@ -41,7 +41,7 @@ export function useLoginLogic() {
 
 			console.log('Login successful:', result);
 			dispatch(setCredentials({ accessToken: result.accessToken, user: result.user }));
-			router.replace('/select-class');
+			router.replace(SELECT_CLASS_SCREEN);
 		} catch (e) {
 			console.log('Login failed:', e);
 			setError(getErrorMessage(e));
