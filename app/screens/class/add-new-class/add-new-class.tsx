@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { TextInput as PaperTextInput } from 'react-native-paper';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button, Card, Text, TextInput } from '@/components/ui/paper';
+import { Button, Text, TextInput } from '@/components/ui/paper';
 import { SELECT_CLASS_SCREEN } from '@/constants/navigation/path';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useCreateClassMutation } from '@/store/api/classApi';
@@ -13,6 +14,7 @@ export default function AddNewClassScreen() {
     const insets = useSafeAreaInsets();
     const backgroundColor = useThemeColor({}, 'background');
     const textColor = useThemeColor({}, 'text');
+    const tintColor = useThemeColor({}, 'tint');
 
     const [schoolName, setSchoolName] = useState('');
     const [academicYear, setAcademicYear] = useState('');
@@ -56,7 +58,7 @@ export default function AddNewClassScreen() {
                     className="flex-1"
                 >
                     <View className="flex-1 px-6 py-8 justify-center">
-                        <View>
+                        <View className='px-5'>
                             <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
                                 Create Class
                             </Text>
@@ -69,8 +71,7 @@ export default function AddNewClassScreen() {
                             </Text>
                         </View>
 
-                        <View className="rounded-2xl mt-6">
-                            <View className="p-5">
+                        <View className="mt-8">
                                 <Text variant="titleMedium" className="font-semibold mb-3">
                                     Class Details
                                 </Text>
@@ -81,7 +82,9 @@ export default function AddNewClassScreen() {
                                     placeholder="e.g. Sunshine Public School"
                                     value={schoolName}
                                     onChangeText={setSchoolName}
-                                    className="mb-3"
+                                    left={<PaperTextInput.Icon icon="school" />}
+                                    className="mb-4"
+                                    outlineStyle={{ borderRadius: 12 }}
                                 />
 
                                 <TextInput
@@ -90,7 +93,9 @@ export default function AddNewClassScreen() {
                                     placeholder="2024"
                                     value={academicYear}
                                     onChangeText={setAcademicYear}
-                                    className="mb-3"
+                                    left={<PaperTextInput.Icon icon="calendar" />}
+                                    className="mb-4"
+                                    outlineStyle={{ borderRadius: 12 }}
                                 />
                                 <View className='flex-row justify-between items-center gap-2'>
                                     <TextInput
@@ -99,7 +104,9 @@ export default function AddNewClassScreen() {
                                         placeholder="e.g. 6"
                                         value={className}
                                         onChangeText={setClassName}
-                                        className="mb-3 flex-1"
+                                        left={<PaperTextInput.Icon icon="book-open-page-variant" />}
+                                        className="mb-4 flex-1"
+                                        outlineStyle={{ borderRadius: 12 }}
                                     />
 
                                     <TextInput
@@ -108,7 +115,9 @@ export default function AddNewClassScreen() {
                                         placeholder="e.g. A"
                                         value={division}
                                         onChangeText={setDivision}
+                                        left={<PaperTextInput.Icon icon="shape-outline" />}
                                         className="mb-4 flex-1"
+                                        outlineStyle={{ borderRadius: 12 }}
                                     />
                                 </View>
 
@@ -119,6 +128,8 @@ export default function AddNewClassScreen() {
                                         loading={isCreating}
                                         disabled={isCreating}
                                         className="rounded-xl flex-1"
+                                        contentStyle={{ paddingVertical: 8 }}
+                                        buttonColor={tintColor}
                                     >
                                         {isCreating ? 'Creating...' : 'Create'}
                                     </Button>
@@ -128,11 +139,12 @@ export default function AddNewClassScreen() {
                                         onPress={() => router.back()}
                                         disabled={isCreating}
                                         className="rounded-xl flex-1"
+                                        contentStyle={{ paddingVertical: 8 }}
+                                        textColor={tintColor}
                                     >
                                         Cancel
                                     </Button>
                                 </View>
-                            </View>
                         </View>
                     </View>
                 </KeyboardAvoidingView>
