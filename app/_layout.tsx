@@ -1,5 +1,7 @@
 import { ThemeProvider } from '@react-navigation/native';
 import { Slot, useSegments } from 'expo-router';
+import { useFonts } from 'expo-font';
+import { JosefinSans_400Regular } from '@expo-google-fonts/josefin-sans';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { View } from 'react-native';
@@ -20,11 +22,18 @@ import {
 } from '@/constants/app-themes';
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    JosefinSans_400Regular,
+  });
   const colorScheme = useColorScheme();
   const paperTheme = colorScheme === 'dark' ? paperDarkTheme : paperLightTheme;
   const navigationTheme = colorScheme === 'dark' ? navigationDarkTheme : navigationLightTheme;
   const segments = useSegments();
   const isAuthRoute = segments[0] === 'screens' && segments[1] === 'auth';
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <PaperProvider theme={paperTheme}>
