@@ -14,6 +14,9 @@ export default function SelectClassScreen() {
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
+  const fabBackgroundColor = useThemeColor({}, 'tint');
+  const fabIconColor = useThemeColor({dark: '#000000', light: '#FFFFFF'}, 'text');
+
 
   const [filterModalVisible, setFilterModalVisible] = useState(false);
 
@@ -132,7 +135,13 @@ export default function SelectClassScreen() {
       <FAB
         icon="plus"
         onPress={() => router.push(ADD_NEW_CLASS_SCREEN)}
-        style={{ position: 'absolute', right: 16, bottom: insets.bottom + 16 }}
+        style={{
+          position: 'absolute',
+          right: 16,
+          bottom: insets.bottom + 16,
+          backgroundColor: fabBackgroundColor,
+        }}
+        color={fabIconColor}
       />
 
       <ClassSelectionFilterModal
