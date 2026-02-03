@@ -52,7 +52,7 @@ export default function SummaryScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           className="flex-1"
         >
-          <View className="flex-1 px-6 py-8">
+          <View className="flex-1 px-6 py-8 pt-20">
             <View>
               <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
                 Full Summary Report
