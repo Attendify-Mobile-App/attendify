@@ -10,6 +10,7 @@ export default function LoginScreen() {
     backgroundColor,
     textColor,
     tintColor,
+    buttonBorderColor,
     username,
     setUsername,
     password,
@@ -55,6 +56,7 @@ export default function LoginScreen() {
               setShowPassword={setShowPassword}
               error={error}
               tintColor={tintColor}
+              buttonBorderColor={buttonBorderColor}
               isLoading={isLoading}
               handleLogin={handleLogin}
               goToResetPassword={goToResetPassword}

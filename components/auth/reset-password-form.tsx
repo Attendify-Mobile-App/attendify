@@ -21,6 +21,7 @@ type ResetPasswordFormProps = {
   error: string;
   success: string;
   tintColor: string;
+  buttonBorderColor: string;
   isLoading: boolean;
   handleResetPassword: () => void;
   goToLogin: () => void;
@@ -44,6 +45,7 @@ export function ResetPasswordForm({
   error,
   success,
   tintColor,
+  buttonBorderColor,
   isLoading,
   handleResetPassword,
   goToLogin,
@@ -139,11 +141,18 @@ export function ResetPasswordForm({
         className="rounded-xl mt-2"
         contentStyle={{ paddingVertical: 8 }}
         buttonColor={tintColor}
+        style={{ borderColor: buttonBorderColor }}
       >
         {isLoading ? 'Updating...' : 'Reset Password'}
       </Button>
 
-      <Button mode="text" onPress={goToLogin} className="mt-3" textColor={tintColor}>
+      <Button
+        mode="text"
+        onPress={goToLogin}
+        className="mt-3"
+        textColor={tintColor}
+        style={{ borderColor: buttonBorderColor }}
+      >
         Back to login
       </Button>
     </View>

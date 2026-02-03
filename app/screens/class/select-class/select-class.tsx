@@ -16,6 +16,7 @@ export default function SelectClassScreen() {
   const textColor = useThemeColor({}, 'text');
   const fabBackgroundColor = useThemeColor({}, 'tint');
   const fabIconColor = useThemeColor({dark: '#000000', light: '#FFFFFF'}, 'text');
+  const buttonBorderColor = useThemeColor({ dark: '#37C8C3', light: '#37C8C3' }, 'tint');
 
 
   const [filterModalVisible, setFilterModalVisible] = useState(false);
@@ -79,13 +80,14 @@ export default function SelectClassScreen() {
                 <Text variant="titleMedium" className="font-semibold">
                   Filters
                 </Text>
-                <Text variant="bodySmall" className="mt-2 text-slate-500">
+                <Text variant="bodySmall" className="mt-2" style={{ color: textColor, opacity: 0.7 }}>
                   {filterSummary}
                 </Text>
                 <Button
                   mode="outlined"
                   onPress={() => setFilterModalVisible(true)}
-                  className="rounded-xl mt-4"
+                  className="rounded-xl mt-4 border-dashed"
+                  style={{ borderColor: buttonBorderColor }}
                 >
                   Filter Classes
                 </Button>
@@ -98,11 +100,11 @@ export default function SelectClassScreen() {
                   Existing Classes
                 </Text>
                 {isLoadingClasses ? (
-                  <Text variant="bodyMedium" className="text-slate-400">
+                  <Text variant="bodyMedium" style={{ color: textColor, opacity: 0.7 }}>
                     Loading classes...
                   </Text>
                 ) : classes.length === 0 ? (
-                  <Text variant="bodyMedium" className="text-slate-400">
+                  <Text variant="bodyMedium" style={{ color: textColor, opacity: 0.7 }}>
                     No classes found. Tap + to create one.
                   </Text>
                 ) : (
@@ -110,6 +112,7 @@ export default function SelectClassScreen() {
                     <Button
                       key={item.id}
                       mode={selectedClassId === item.id ? 'contained' : 'outlined'}
+                      style={{ borderColor: buttonBorderColor, marginBottom: 8 }}
                       onPress={() => handleSelect(item)}
                       className="rounded-xl mb-2"
                     >
@@ -125,6 +128,7 @@ export default function SelectClassScreen() {
               onPress={handleContinue}
               disabled={!selectedClass}
               className="rounded-xl mt-4"
+              style={{ borderColor: buttonBorderColor }}
             >
               Continue with Selected Class
             </Button>

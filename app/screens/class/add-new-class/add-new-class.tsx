@@ -15,6 +15,7 @@ export default function AddNewClassScreen() {
     const backgroundColor = useThemeColor({}, 'background');
     const textColor = useThemeColor({}, 'text');
     const tintColor = useThemeColor({}, 'tint');
+    const buttonBorderColor = useThemeColor({ dark: '#37C8C3', light: '#37C8C3' }, 'tint');
 
     const [schoolName, setSchoolName] = useState('');
     const [academicYear, setAcademicYear] = useState('');
@@ -50,7 +51,7 @@ export default function AddNewClassScreen() {
         <SafeAreaProvider className="flex-1" style={{ backgroundColor }}>
             <ScrollView
                 className="flex-1"
-                contentContainerStyle={{ flexGrow: 1, backgroundColor, paddingBottom: insets.bottom + 24 }}
+                contentContainerStyle={{ flexGrow: 1, backgroundColor, paddingBottom: insets.bottom }}
                 showsVerticalScrollIndicator={false}
             >
                 <KeyboardAvoidingView
@@ -58,7 +59,7 @@ export default function AddNewClassScreen() {
                     className="flex-1"
                 >
                     <View className="flex-1 px-6 py-8 justify-center">
-                        <View className='px-5'>
+                        <View className=''>
                             <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
                                 Create Class
                             </Text>
@@ -121,7 +122,7 @@ export default function AddNewClassScreen() {
                                     />
                                 </View>
 
-                                <View className='flex-row justify-between items-center gap-2'>
+                                <View className='flex-row justify-between items-center gap-2 mt-2'>
                                     <Button
                                         mode="contained"
                                         onPress={handleCreateClass}
@@ -130,6 +131,7 @@ export default function AddNewClassScreen() {
                                         className="rounded-xl flex-1"
                                         contentStyle={{ paddingVertical: 8 }}
                                         buttonColor={tintColor}
+                                        style={{ borderColor: buttonBorderColor }}
                                     >
                                         {isCreating ? 'Creating...' : 'Create'}
                                     </Button>
@@ -141,6 +143,7 @@ export default function AddNewClassScreen() {
                                         className="rounded-xl flex-1"
                                         contentStyle={{ paddingVertical: 8 }}
                                         textColor={tintColor}
+                                        style={{ borderColor: buttonBorderColor }}
                                     >
                                         Cancel
                                     </Button>

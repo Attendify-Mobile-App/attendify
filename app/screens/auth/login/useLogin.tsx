@@ -33,6 +33,7 @@ export function useLoginLogic() {
 	const backgroundColor = useThemeColor({}, 'background');
 	const textColor = useThemeColor({}, 'text');
 	const tintColor = useThemeColor({}, 'tint');
+	const buttonBorderColor = useThemeColor({ dark: '#37C8C3', light: '#37C8C3' }, 'tint');
 
 	const handleLogin = async () => {
 		try {
@@ -59,6 +60,7 @@ export function useLoginLogic() {
 		backgroundColor,
 		textColor,
 		tintColor,
+		buttonBorderColor,
 		username,
 		setUsername,
 		password,

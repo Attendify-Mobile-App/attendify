@@ -10,6 +10,7 @@ export default function ResetPasswordScreen() {
     backgroundColor,
     textColor,
     tintColor,
+    buttonBorderColor,
     username,
     setUsername,
     password,
@@ -72,6 +73,7 @@ export default function ResetPasswordScreen() {
               error={error}
               success={success}
               tintColor={tintColor}
+              buttonBorderColor={buttonBorderColor}
               isLoading={isLoading}
               handleResetPassword={handleResetPassword}
               goToLogin={goToLogin}

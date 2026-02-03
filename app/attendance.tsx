@@ -40,6 +40,7 @@ export default function AttendanceScreen() {
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
+  const buttonBorderColor = useThemeColor({ dark: '#37C8C3', light: '#37C8C3' }, 'tint');
   const classId = selectedClass?.id ?? '';
   const { data: students = [] } = useGetStudentsByClassQuery(classId, {
     skip: !classId,
@@ -124,6 +125,7 @@ export default function AttendanceScreen() {
                     compact
                     onPress={() => setSelectedDate(advanceDate(selectedDate, -1))}
                     className="rounded-lg"
+                    style={{ borderColor: buttonBorderColor }}
                   >
                     Prev
                   </Button>
@@ -135,6 +137,7 @@ export default function AttendanceScreen() {
                     compact
                     onPress={() => setSelectedDate(advanceDate(selectedDate, 1))}
                     className="rounded-lg"
+                    style={{ borderColor: buttonBorderColor }}
                   >
                     Next
                   </Button>
@@ -177,6 +180,7 @@ export default function AttendanceScreen() {
                           buttonColor={status === 'P' ? presentColor : absentColor}
                           textColor={status === 'P' ? presentText : absentText}
                           className="rounded-lg"
+                          style={{ borderColor: buttonBorderColor }}
                         >
                           {status === 'P' ? 'Present' : 'Absent'}
                         </Button>
@@ -278,10 +282,16 @@ export default function AttendanceScreen() {
               mode="outlined"
               onPress={() => router.push('/year-total')}
               className="rounded-xl mb-2"
+              style={{ borderColor: buttonBorderColor }}
             >
               View Year Totals
             </Button>
-            <Button mode="outlined" onPress={() => router.push('/summary')} className="rounded-xl">
+            <Button
+              mode="outlined"
+              onPress={() => router.push('/summary')}
+              className="rounded-xl"
+              style={{ borderColor: buttonBorderColor }}
+            >
               View Full Summary
             </Button>
           </View>

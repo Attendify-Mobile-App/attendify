@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { Button, Card, Text } from '@/components/ui/paper';
+import { useThemePreference } from '@/context/theme-preference-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { logout } from '@/store/slices/authSlice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -11,8 +12,11 @@ export default function ProfileScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const { preference, setPreference } = useThemePreference();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
+  const buttonBorderColor = useThemeColor({ dark: '#37C8C3', light: '#37C8C3' }, 'tint');
+  
 
   const handleLogout = () => {
     dispatch(logout());
@@ -30,7 +34,7 @@ export default function ProfileScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           className="flex-1"
         >
-          <View className="flex-1 px-6 py-10">
+          <View className="flex-1 px-6 py-20">
             <View>
               <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
                 Profile
@@ -52,12 +56,43 @@ export default function ProfileScreen() {
                 <Text variant="bodySmall" className="text-slate-500">
                   Username: {user?.username ?? 'Not available'}
                 </Text>
-                <Text variant="bodySmall" className="text-slate-500 mt-1">
-                  Role: {user?.role ?? 'Not available'}
+              </View>
+            </Card>
+
+            <Card className="rounded-2xl mt-4">
+              <View className="p-5">
+                <Text variant="titleMedium" className="font-semibold mb-3">
+                  Appearance
                 </Text>
-                <Text variant="bodySmall" className="text-slate-500 mt-1">
-                  Created: {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}
+                <Text variant="bodySmall" className="mb-3" style={{ color: textColor, opacity: 0.7 }}>
+                  Default mode is Light. You can also switch to Dark or System mode.
                 </Text>
+                <View className="flex-row">
+                  <Button
+                    mode={preference === 'light' ? 'contained' : 'outlined'}
+                    onPress={() => setPreference('light')}
+                    className="rounded-xl flex-1 mr-2"
+                    style={{ borderColor: buttonBorderColor }}
+                  >
+                    Light
+                  </Button>
+                  <Button
+                    mode={preference === 'dark' ? 'contained' : 'outlined'}
+                    onPress={() => setPreference('dark')}
+                    className="rounded-xl flex-1 mr-2"
+                    style={{ borderColor: buttonBorderColor }}
+                  >
+                    Dark
+                  </Button>
+                  <Button
+                    mode={preference === 'system' ? 'contained' : 'outlined'}
+                    onPress={() => setPreference('system')}
+                    className="rounded-xl flex-1"
+                    style={{ borderColor: buttonBorderColor }}  
+                  >
+                    System
+                  </Button>
+                </View>
               </View>
             </Card>
 
@@ -70,10 +105,16 @@ export default function ProfileScreen() {
                   mode="outlined"
                   onPress={() => router.push('/screens/auth/reset-password/reset-password')}
                   className="rounded-xl mb-3"
+                  style={{ borderColor: buttonBorderColor }}
                 >
                   Reset Password
                 </Button>
-                <Button mode="contained" onPress={handleLogout} className="rounded-xl">
+                <Button
+                  mode="contained"
+                  onPress={handleLogout}
+                  className="rounded-xl"
+                  style={{ borderColor: buttonBorderColor }}
+                >
                   Logout
                 </Button>
               </View>

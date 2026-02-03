@@ -34,6 +34,7 @@ export function useSignupLogic() {
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
+  const buttonBorderColor = useThemeColor({ dark: '#37C8C3', light: '#37C8C3' }, 'tint');
 
   const goToLogin = () => router.replace(LOGIN_SCREEN);
 
@@ -67,6 +68,7 @@ export function useSignupLogic() {
     backgroundColor,
     textColor,
     tintColor,
+    buttonBorderColor,
     username,
     setUsername,
     password,

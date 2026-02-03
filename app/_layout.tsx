@@ -12,6 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { FooterTabs } from '@/components/footer-tabs';
 import { AttendanceProvider } from '@/context/attendance-context';
+import { ThemePreferenceProvider } from '@/context/theme-preference-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { persistor, store } from '@/store/store';
 import {
@@ -25,15 +26,24 @@ export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     JosefinSans_400Regular,
   });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <ThemePreferenceProvider>
+      <RootLayoutContent />
+    </ThemePreferenceProvider>
+  );
+}
+
+function RootLayoutContent() {
   const colorScheme = useColorScheme();
   const paperTheme = colorScheme === 'dark' ? paperDarkTheme : paperLightTheme;
   const navigationTheme = colorScheme === 'dark' ? navigationDarkTheme : navigationLightTheme;
   const segments = useSegments();
   const isAuthRoute = segments[0] === 'screens' && segments[1] === 'auth';
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <PaperProvider theme={paperTheme}>

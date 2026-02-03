@@ -46,6 +46,7 @@ export function ClassSelectionFilterModal({
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme() ?? 'light';
   const labelColor = useThemeColor({ light: '#475569', dark: '#CBD5E1' }, 'text');
+  const buttonBorderColor = useThemeColor({ dark: '#37C8C3', light: '#37C8C3' }, 'tint');
 
   const [schoolOpen, setSchoolOpen] = useState(false);
   const [yearOpen, setYearOpen] = useState(false);
@@ -228,10 +229,15 @@ export function ClassSelectionFilterModal({
 
 
             <View className="flex-row items-center justify-between mt-10">
-              <Button mode="text" onPress={clearFilters}>
+              <Button mode="text" onPress={clearFilters} style={{ borderColor: buttonBorderColor }}>
                 Clear All
               </Button>
-              <Button mode="contained" onPress={onDismiss} className="rounded-xl">
+              <Button
+                mode="contained"
+                onPress={onDismiss}
+                className="rounded-xl"
+                style={{ borderColor: buttonBorderColor }}
+              >
                 Apply Filters
               </Button>
             </View>

@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAttendance } from '@/context/attendance-context';
 import { useGetClassesQuery } from '@/store/api/classApi';
 import type { SchoolClass } from '@/types/attendance';
+import { SELECT_STUDENT_SCREEN } from '@/constants/navigation/path';
 
 type UseSelectClassResult = {
 	filterSchoolName: string;
@@ -123,7 +124,7 @@ export function useSelectClass(): UseSelectClassResult {
 			return;
 		}
 		setSelectedClass(selectedClass);
-		router.push('/students');
+		router.push(SELECT_STUDENT_SCREEN);
 	};
 
 	return {

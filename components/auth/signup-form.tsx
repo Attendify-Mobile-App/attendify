@@ -17,6 +17,7 @@ type SignupFormProps = {
   error: string;
   success: string;
   tintColor: string;
+  buttonBorderColor: string;
   isLoading: boolean;
   handleSignup: () => void;
   goToLogin: () => void;
@@ -36,6 +37,7 @@ export function SignupForm({
   error,
   success,
   tintColor,
+  buttonBorderColor,
   isLoading,
   handleSignup,
   goToLogin,
@@ -112,11 +114,18 @@ export function SignupForm({
         className="rounded-xl mt-2"
         contentStyle={{ paddingVertical: 8 }}
         buttonColor={tintColor}
+        style={{ borderColor: buttonBorderColor }}
       >
         {isLoading ? 'Creating...' : 'Sign Up'}
       </Button>
 
-      <Button mode="text" onPress={goToLogin} className="mt-3" textColor={tintColor}>
+      <Button
+        mode="text"
+        onPress={goToLogin}
+        className="mt-3"
+        textColor={tintColor}
+        style={{ borderColor: buttonBorderColor }}
+      >
         Already have an account? Log in
       </Button>
     </View>

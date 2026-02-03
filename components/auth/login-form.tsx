@@ -12,6 +12,7 @@ type LoginFormProps = {
 	setShowPassword: (value: boolean) => void;
 	error: string;
 	tintColor: string;
+	buttonBorderColor: string;
 	isLoading: boolean;
 	handleLogin: () => void;
 	goToResetPassword: () => void;
@@ -27,6 +28,7 @@ export function LoginForm({
 	setShowPassword,
 	error,
 	tintColor,
+	buttonBorderColor,
 	isLoading,
 	handleLogin,
 	goToResetPassword,
@@ -77,6 +79,7 @@ export function LoginForm({
 				textColor={tintColor}
 				compact
 				className="self-end"
+				style={{ borderColor: buttonBorderColor }}
 			>
 				Reset password?
 			</Button>
@@ -89,11 +92,18 @@ export function LoginForm({
 				className="rounded-xl mt-4"
 				contentStyle={{ paddingVertical: 8 }}
 				buttonColor={tintColor}
+				style={{ borderColor: buttonBorderColor }}
 			>
 				{isLoading ? 'Logging in...' : 'Login'}
 			</Button>
 
-			<Button mode="text" onPress={goToSignup} className="mt-3" textColor={tintColor}>
+			<Button
+				mode="text"
+				onPress={goToSignup}
+				className="mt-3"
+				textColor={tintColor}
+				style={{ borderColor: buttonBorderColor }}
+			>
 				Create new account
 			</Button>
 		</View>

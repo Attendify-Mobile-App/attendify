@@ -10,6 +10,7 @@ export default function SignupScreen() {
     backgroundColor,
     textColor,
     tintColor,
+    buttonBorderColor,
     username,
     setUsername,
     password,
@@ -64,6 +65,7 @@ export default function SignupScreen() {
               error={error}
               success={success}
               tintColor={tintColor}
+              buttonBorderColor={buttonBorderColor}
               isLoading={isLoading}
               handleSignup={handleSignup}
               goToLogin={goToLogin}
