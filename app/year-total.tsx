@@ -56,7 +56,7 @@ export default function YearTotalScreen() {
             <ScrollView horizontal className="mt-6">
               <Card className="rounded-2xl">
                 <View className="p-4">
-                  <View className="flex-row bg-slate-200 rounded-lg">
+                  <View className="flex-row rounded-lg">
                     <Text className="w-40 p-2 font-semibold">Student</Text>
                     {monthLabels.map((label) => (
                       <Text key={label} className="w-20 p-2 text-center font-semibold">
