@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -30,6 +30,7 @@ export default function AddNewStudentScreen() {
     tintColor,
     buttonBorderColor,
     isCreating,
+    isEditMode,
     handleAdd,
     handleCancel,
   } = useAddNewStudent();
@@ -52,6 +53,16 @@ export default function AddNewStudentScreen() {
     }
   };
 
+  useEffect(() => {
+    if (!dob) {
+      return;
+    }
+    const parsed = new Date(dob);
+    if (!Number.isNaN(parsed.getTime())) {
+      setSelectedDobDate(parsed);
+    }
+  }, [dob]);
+
   return (
     <SafeAreaProvider className="flex-1" style={{ backgroundColor }}>
       <ScrollView
@@ -66,7 +77,7 @@ export default function AddNewStudentScreen() {
           <View className="flex-1 px-6 py-8 justify-center">
             <View>
               <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
-                Add Student
+                {isEditMode ? 'Edit Student' : 'Add Student'}
               </Text>
               <Text
                 variant="bodyMedium"
@@ -161,7 +172,7 @@ export default function AddNewStudentScreen() {
                   buttonColor={tintColor}
                   style={{ borderColor: buttonBorderColor }}
                 >
-                  {isCreating ? 'Adding...' : 'Add Student'}
+                  {isCreating ? (isEditMode ? 'Saving...' : 'Adding...') : (isEditMode ? 'Save Student' : 'Add Student')}
                 </Button>
 
                 <Button

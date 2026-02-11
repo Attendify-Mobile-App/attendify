@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMemo, useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Button, Card, FAB, Text } from '@/components/ui/paper';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -20,6 +21,7 @@ export default function SelectClassScreen() {
 
 
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [showClassActions, setShowClassActions] = useState(false);
 
   const {
     filterSchoolName,
@@ -38,7 +40,10 @@ export default function SelectClassScreen() {
     distinctValues,
 
     handleSelect,
+    handleEditClass,
+    handleDeleteClass,
     handleContinue,
+    deletingClassId,
   } = useSelectClass();
 
   const filterSummary = useMemo(() => {
@@ -96,9 +101,22 @@ export default function SelectClassScreen() {
 
             <Card className="rounded-2xl mt-4">
               <View className="p-5">
-                <Text variant="titleMedium" className="font-semibold mb-3">
-                  Existing Classes
-                </Text>
+                <View className="flex-row items-center justify-between mb-3">
+                  <Text variant="titleMedium" className="font-semibold">
+                    Existing Classes
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowClassActions((prev) => !prev)}
+                    className="h-9 w-9 rounded-xl items-center justify-center border"
+                    style={{ borderColor: buttonBorderColor }}
+                  >
+                    <MaterialCommunityIcons
+                      name={showClassActions ? 'close' : 'cog-outline'}
+                      size={17}
+                      color={buttonBorderColor}
+                    />
+                  </TouchableOpacity>
+                </View>
                 {isLoadingClasses ? (
                   <Text variant="bodyMedium" style={{ color: textColor, opacity: 0.7 }}>
                     Loading classes...
@@ -109,15 +127,58 @@ export default function SelectClassScreen() {
                   </Text>
                 ) : (
                   classes.map((item) => (
-                    <Button
-                      key={item.id}
-                      mode={selectedClassId === item.id ? 'contained' : 'outlined'}
-                      style={{ borderColor: buttonBorderColor, marginBottom: 8 }}
-                      onPress={() => handleSelect(item)}
-                      className="rounded-xl mb-2"
-                    >
-                      {item.schoolName} • {item.className}-{item.division} ({item.academicYear})
-                    </Button>
+                    <View key={item.id} className="mb-2">
+                      <View className="flex-row items-center">
+                        <View className={showClassActions ? 'flex-1 mr-2' : 'flex-1'}>
+                          <Button
+                            mode={selectedClassId === item.id ? 'contained' : 'outlined'}
+                            style={{ borderColor: buttonBorderColor }}
+                            onPress={() => handleSelect(item)}
+                            className="rounded-xl"
+                          >
+                            {item.schoolName} • {item.className}-{item.division} ({item.academicYear})
+                          </Button>
+                        </View>
+                        {showClassActions ? (
+                          <View className="flex-row items-center">
+                            <TouchableOpacity
+                              onPress={() => handleEditClass(item)}
+                              className="h-8 w-8 rounded-lg items-center justify-center mr-2 border"
+                              style={{ borderColor: buttonBorderColor }}
+                            >
+                              <MaterialCommunityIcons name="pencil-outline" size={16} color={textColor} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              disabled={deletingClassId === item.id}
+                              onPress={() =>
+                                Alert.alert(
+                                  'Delete class?',
+                                  `This will remove ${item.className}-${item.division} and related data.`,
+                                  [
+                                    { text: 'Cancel', style: 'cancel' },
+                                    {
+                                      text: 'Delete',
+                                      style: 'destructive',
+                                      onPress: () => {
+                                        void handleDeleteClass(item);
+                                      },
+                                    },
+                                  ],
+                                )
+                              }
+                              className="h-8 w-8 rounded-lg items-center justify-center border"
+                              style={{ borderColor: '#DC2626' }}
+                            >
+                              <MaterialCommunityIcons
+                                name={deletingClassId === item.id ? 'loading' : 'trash-can-outline'}
+                                size={16}
+                                color="#DC2626"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        ) : null}
+                      </View>
+                    </View>
                   ))
                 )}
               </View>

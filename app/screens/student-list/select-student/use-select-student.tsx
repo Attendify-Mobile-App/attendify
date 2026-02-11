@@ -3,7 +3,9 @@ import { useRouter } from 'expo-router';
 import { ADD_NEW_STUDENT_SCREEN } from '@/constants/navigation/path';
 import { useAttendance } from '@/context/attendance-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useGetStudentsByClassQuery } from '@/store/api/studentApi';
+import { useDeleteStudentMutation, useGetStudentsByClassQuery } from '@/store/api/studentApi';
+import type { Student } from '@/types/attendance';
+import { useState } from 'react';
 
 export const useSelectStudent = () => {
   const router = useRouter();
@@ -18,12 +20,40 @@ export const useSelectStudent = () => {
   const { data: students = [] } = useGetStudentsByClassQuery(classId ?? '', {
     skip: !classId,
   });
+  const [deletingStudentId, setDeletingStudentId] = useState<string | null>(null);
+  const [deleteStudent] = useDeleteStudentMutation();
 
   const navigateToAttendance = () => {
     router.push('/attendance');
   };
   const navigateToAddStudent = () => {
     router.push(ADD_NEW_STUDENT_SCREEN);
+  };
+
+  const handleEditStudent = (student: Student) => {
+    router.push({
+      pathname: ADD_NEW_STUDENT_SCREEN,
+      params: {
+        id: student.id,
+        admissionNo: student.admissionNo,
+        studentNo: student.studentNo,
+        name: student.name,
+        dob: student.dateOfBirth,
+        gender: student.gender,
+      },
+    });
+  };
+
+  const handleDeleteStudent = async (studentId: string) => {
+    if (!classId) {
+      return;
+    }
+    setDeletingStudentId(studentId);
+    try {
+      await deleteStudent({ id: studentId, classId }).unwrap();
+    } finally {
+      setDeletingStudentId(null);
+    }
   };
 
   return {
@@ -37,5 +67,8 @@ export const useSelectStudent = () => {
     fabIconColor,
     navigateToAttendance,
     navigateToAddStudent,
+    handleEditStudent,
+    handleDeleteStudent,
+    deletingStudentId,
   };
 };

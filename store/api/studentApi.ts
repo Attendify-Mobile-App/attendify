@@ -10,6 +10,16 @@ export type CreateStudentRequest = {
   gender: Student['gender'];
 };
 
+export type UpdateStudentRequest = {
+  id: string;
+  classId: string;
+  admissionNo?: string;
+  studentNo?: string;
+  name?: string;
+  dateOfBirth?: string;
+  gender?: Student['gender'];
+};
+
 export const studentApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getStudentsByClass: builder.query<Student[], string>({
@@ -24,8 +34,28 @@ export const studentApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [{ type: 'Students', id: arg.classId }],
     }),
+    updateStudent: builder.mutation<Student, UpdateStudentRequest>({
+      query: ({ id, classId: _classId, ...body }) => ({
+        url: `/students/${id}`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Students', id: arg.classId }],
+    }),
+    deleteStudent: builder.mutation<{ deleted: boolean }, { id: string; classId: string }>({
+      query: ({ id }) => ({
+        url: `/students/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Students', id: arg.classId }],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetStudentsByClassQuery, useCreateStudentMutation } = studentApi;
+export const {
+  useGetStudentsByClassQuery,
+  useCreateStudentMutation,
+  useUpdateStudentMutation,
+  useDeleteStudentMutation,
+} = studentApi;

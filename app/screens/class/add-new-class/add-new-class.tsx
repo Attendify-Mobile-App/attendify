@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { TextInput as PaperTextInput } from 'react-native-paper';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,10 +7,17 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { Button, Text, TextInput } from '@/components/ui/paper';
 import { SELECT_CLASS_SCREEN } from '@/constants/navigation/path';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useCreateClassMutation } from '@/store/api/classApi';
+import { useCreateClassMutation, useUpdateClassMutation } from '@/store/api/classApi';
 
 export default function AddNewClassScreen() {
     const router = useRouter();
+    const params = useLocalSearchParams<{
+        id?: string;
+        schoolName?: string;
+        academicYear?: string;
+        className?: string;
+        division?: string;
+    }>();
     const insets = useSafeAreaInsets();
     const backgroundColor = useThemeColor({}, 'background');
     const textColor = useThemeColor({}, 'text');
@@ -21,19 +28,41 @@ export default function AddNewClassScreen() {
     const [academicYear, setAcademicYear] = useState('');
     const [className, setClassName] = useState('');
     const [division, setDivision] = useState('');
+    const classId = typeof params.id === 'string' ? params.id : '';
+    const isEditMode = Boolean(classId);
     const [createClass, { isLoading: isCreating }] = useCreateClassMutation();
+    const [updateClass, { isLoading: isUpdating }] = useUpdateClassMutation();
+    const isSubmitting = isCreating || isUpdating;
+
+    useEffect(() => {
+        if (!isEditMode) {
+            return;
+        }
+        setSchoolName(typeof params.schoolName === 'string' ? params.schoolName : '');
+        setAcademicYear(typeof params.academicYear === 'string' ? params.academicYear : '');
+        setClassName(typeof params.className === 'string' ? params.className : '');
+        setDivision(typeof params.division === 'string' ? params.division : '');
+    }, [isEditMode, params.academicYear, params.className, params.division, params.schoolName]);
 
     const handleCreateClass = async () => {
         if (!schoolName || !academicYear || !className || !division) {
             return;
         }
 
-        const created = await createClass({
-            schoolName,
-            academicYear,
-            className,
-            division,
-        }).unwrap();
+        const created = isEditMode
+            ? await updateClass({
+                id: classId,
+                schoolName,
+                academicYear,
+                className,
+                division,
+            }).unwrap()
+            : await createClass({
+                schoolName,
+                academicYear,
+                className,
+                division,
+            }).unwrap();
 
         router.replace({
             pathname: SELECT_CLASS_SCREEN,
@@ -61,14 +90,16 @@ export default function AddNewClassScreen() {
                     <View className="flex-1 px-6 py-8 justify-center">
                         <View className=''>
                             <Text variant="headlineMedium" className="font-semibold" style={{ color: textColor }}>
-                                Create Class
+                                {isEditMode ? 'Edit Class' : 'Create Class'}
                             </Text>
                             <Text
                                 variant="bodyMedium"
                                 className="mt-2"
                                 style={{ color: textColor, opacity: 0.7 }}
                             >
-                                Add a new class to start marking attendance.
+                                {isEditMode
+                                    ? 'Update class details.'
+                                    : 'Add a new class to start marking attendance.'}
                             </Text>
                         </View>
 
@@ -126,20 +157,20 @@ export default function AddNewClassScreen() {
                                     <Button
                                         mode="contained"
                                         onPress={handleCreateClass}
-                                        loading={isCreating}
-                                        disabled={isCreating}
+                                        loading={isSubmitting}
+                                        disabled={isSubmitting}
                                         className="rounded-xl flex-1"
                                         contentStyle={{ paddingVertical: 8 }}
                                         buttonColor={tintColor}
                                         style={{ borderColor: buttonBorderColor }}
                                     >
-                                        {isCreating ? 'Creating...' : 'Create'}
+                                        {isSubmitting ? (isEditMode ? 'Saving...' : 'Creating...') : (isEditMode ? 'Save' : 'Create')}
                                     </Button>
 
                                     <Button
                                         mode="outlined"
                                         onPress={() => router.back()}
-                                        disabled={isCreating}
+                                        disabled={isSubmitting}
                                         className="rounded-xl flex-1"
                                         contentStyle={{ paddingVertical: 8 }}
                                         textColor={tintColor}

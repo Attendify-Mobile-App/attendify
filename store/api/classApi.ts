@@ -15,6 +15,14 @@ export type CreateClassRequest = {
   division: string;
 };
 
+export type UpdateClassRequest = {
+  id: string;
+  schoolName?: string;
+  academicYear?: string;
+  className?: string;
+  division?: string;
+};
+
 export const classApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getClasses: builder.query<SchoolClass[], ClassFilters | void>({
@@ -32,8 +40,28 @@ export const classApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Classes'],
     }),
+    updateClass: builder.mutation<SchoolClass, UpdateClassRequest>({
+      query: ({ id, ...body }) => ({
+        url: `/classes/${id}`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['Classes'],
+    }),
+    deleteClass: builder.mutation<{ deleted: boolean }, { id: string }>({
+      query: ({ id }) => ({
+        url: `/classes/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Classes'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetClassesQuery, useCreateClassMutation } = classApi;
+export const {
+  useGetClassesQuery,
+  useCreateClassMutation,
+  useUpdateClassMutation,
+  useDeleteClassMutation,
+} = classApi;

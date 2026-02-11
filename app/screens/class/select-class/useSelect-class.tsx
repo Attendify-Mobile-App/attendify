@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { useAttendance } from '@/context/attendance-context';
-import { useGetClassesQuery } from '@/store/api/classApi';
+import { useDeleteClassMutation, useGetClassesQuery } from '@/store/api/classApi';
 import type { SchoolClass } from '@/types/attendance';
-import { SELECT_STUDENT_SCREEN } from '@/constants/navigation/path';
+import { ADD_NEW_CLASS_SCREEN, SELECT_STUDENT_SCREEN } from '@/constants/navigation/path';
 
 type UseSelectClassResult = {
 	filterSchoolName: string;
@@ -30,7 +30,10 @@ type UseSelectClassResult = {
 	};
 
 	handleSelect: (item: SchoolClass) => void;
+	handleEditClass: (item: SchoolClass) => void;
+	handleDeleteClass: (item: SchoolClass) => Promise<void>;
 	handleContinue: () => void;
+	deletingClassId: string | null;
 };
 
 export function useSelectClass(): UseSelectClassResult {
@@ -43,13 +46,15 @@ export function useSelectClass(): UseSelectClassResult {
 	}>();
 
 	const router = useRouter();
-	const { setSelectedClass } = useAttendance();
+	const { selectedClass: contextSelectedClass, setSelectedClass } = useAttendance();
 
 	const [filterSchoolName, setFilterSchoolName] = useState('');
 	const [filterYear, setFilterYear] = useState('');
 	const [filterClassName, setFilterClassName] = useState('');
 	const [filterDivision, setFilterDivision] = useState('');
 	const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+	const [deletingClassId, setDeletingClassId] = useState<string | null>(null);
+	const [deleteClass] = useDeleteClassMutation();
 
 	const isHydratedFromParamsRef = useRef(false);
 	useEffect(() => {
@@ -119,6 +124,34 @@ export function useSelectClass(): UseSelectClassResult {
 		setSelectedClassId(item.id);
 	};
 
+	const handleEditClass = (item: SchoolClass) => {
+		router.push({
+			pathname: ADD_NEW_CLASS_SCREEN,
+			params: {
+				id: item.id,
+				schoolName: item.schoolName,
+				academicYear: item.academicYear,
+				className: item.className,
+				division: item.division,
+			},
+		});
+	};
+
+	const handleDeleteClass = async (item: SchoolClass) => {
+		setDeletingClassId(item.id);
+		try {
+			await deleteClass({ id: item.id }).unwrap();
+			if (selectedClassId === item.id) {
+				setSelectedClassId(null);
+			}
+			if (contextSelectedClass?.id === item.id) {
+				setSelectedClass(null);
+			}
+		} finally {
+			setDeletingClassId(null);
+		}
+	};
+
 	const handleContinue = () => {
 		if (!selectedClass) {
 			return;
@@ -146,7 +179,10 @@ export function useSelectClass(): UseSelectClassResult {
 		distinctValues,
 
 		handleSelect,
+		handleEditClass,
+		handleDeleteClass,
 		handleContinue,
+		deletingClassId,
 	};
 }
 

@@ -1,5 +1,7 @@
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Button, Card, FAB, Text } from '@/components/ui/paper';
 
@@ -7,6 +9,7 @@ import { useSelectStudent } from './use-select-student';
 
 export default function StudentsScreen() {
   const insets = useSafeAreaInsets();
+  const [showStudentActions, setShowStudentActions] = useState(false);
   const {
     selectedClass,
     students,
@@ -18,6 +21,9 @@ export default function StudentsScreen() {
     fabIconColor,
     navigateToAttendance,
     navigateToAddStudent,
+    handleEditStudent,
+    handleDeleteStudent,
+    deletingStudentId,
   } = useSelectStudent();
 
   return (
@@ -53,9 +59,24 @@ export default function StudentsScreen() {
                   <Text variant="titleMedium" className="font-semibold">
                     Roster
                   </Text>
-                  <Text variant="labelMedium" className="text-slate-500">
-                    {students.length} students
-                  </Text>
+                  <View className="flex-row items-center">
+                    <Text variant="labelMedium" className="text-slate-500 mr-2">
+                      {students.length} students
+                    </Text>
+                    <Button
+                      mode="outlined"
+                      compact
+                      onPress={() => setShowStudentActions((prev) => !prev)}
+                      className="rounded-lg"
+                      style={{ borderColor: buttonBorderColor }}
+                    >
+                      <MaterialCommunityIcons
+                        name={showStudentActions ? 'close' : 'cog-outline'}
+                        size={14}
+                        color={buttonBorderColor}
+                      />
+                    </Button>
+                  </View>
                 </View>
                 {students.length === 0 ? (
                   <Text variant="bodyMedium" className="text-slate-400">
@@ -77,6 +98,44 @@ export default function StudentsScreen() {
                         <Text variant="bodySmall" className="text-slate-500">
                           DOB: {student.dateOfBirth}
                         </Text>
+                        {showStudentActions ? (
+                          <View className="flex-row mt-1">
+                            <Button
+                              compact
+                              mode="outlined"
+                              onPress={() => handleEditStudent(student)}
+                              className="mr-2 rounded-lg"
+                              style={{ borderColor: buttonBorderColor }}
+                            >
+                              <MaterialCommunityIcons name="pencil-outline" size={14} color={buttonBorderColor} />
+                            </Button>
+                            <Button
+                              compact
+                              mode="outlined"
+                              loading={deletingStudentId === student.id}
+                              disabled={deletingStudentId === student.id}
+                              style={{ borderColor: '#DC2626' }}
+                              onPress={() =>
+                                Alert.alert(
+                                  'Delete student?',
+                                  `Remove ${student.name} from this class.`,
+                                  [
+                                    { text: 'Cancel', style: 'cancel' },
+                                    {
+                                      text: 'Delete',
+                                      style: 'destructive',
+                                      onPress: () => {
+                                        void handleDeleteStudent(student.id);
+                                      },
+                                    },
+                                  ],
+                                )
+                              }
+                            >
+                              <MaterialCommunityIcons name="trash-can-outline" size={14} color="#DC2626" />
+                            </Button>
+                          </View>
+                        ) : null}
                       </View>
                     </View>
                   ))
