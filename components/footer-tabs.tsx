@@ -1,15 +1,21 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Link, usePathname } from 'expo-router';
+import { type Href, Link, usePathname } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Text } from '@/components/ui/paper';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import {
+  ATTENDANCE_SCREEN,
+  SUMMARY_SCREEN,
+  YEAR_TOTAL_SCREEN,
+  PROFILE_SCREEN,
+} from '@/constants/navigation/path';
 
 type FooterTab = {
   key: 'attendance' | 'summary' | 'profile';
   label: string;
-  href: string;
+  href: Href;
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   isActive: (pathname: string) => boolean;
 };
@@ -22,23 +28,23 @@ const FOOTER_TABS: FooterTab[] = [
     icon: 'calendar-check',
     isActive: (pathname) =>
       pathname.startsWith('/screens/class') ||
-      pathname === '/attendance' ||
+      pathname === ATTENDANCE_SCREEN ||
       pathname === '/students' ||
-      pathname === '/year-total',
+      pathname === YEAR_TOTAL_SCREEN,
   },
   {
     key: 'summary',
     label: 'Summary',
-    href: '/summary',
+    href: SUMMARY_SCREEN,
     icon: 'chart-bar',
-    isActive: (pathname) => pathname === '/summary',
+    isActive: (pathname) => pathname === SUMMARY_SCREEN,
   },
   {
     key: 'profile',
     label: 'Profile',
-    href: '/profile',
+    href: PROFILE_SCREEN,
     icon: 'account-circle',
-    isActive: (pathname) => pathname === '/profile',
+    isActive: (pathname) => pathname === PROFILE_SCREEN,
   },
 ];
 
