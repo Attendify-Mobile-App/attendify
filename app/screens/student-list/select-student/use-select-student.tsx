@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 
-import { ADD_NEW_STUDENT_SCREEN } from '@/constants/navigation/path';
+import { ADD_NEW_STUDENT_SCREEN, ATTENDANCE_SCREEN } from '@/constants/navigation/path';
 import { useAttendance } from '@/context/attendance-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useDeleteStudentMutation, useGetStudentsByClassQuery } from '@/store/api/studentApi';
@@ -24,7 +24,7 @@ export const useSelectStudent = () => {
   const [deleteStudent] = useDeleteStudentMutation();
 
   const navigateToAttendance = () => {
-    router.push('/attendance');
+    router.push(ATTENDANCE_SCREEN);
   };
   const navigateToAddStudent = () => {
     router.push(ADD_NEW_STUDENT_SCREEN);
